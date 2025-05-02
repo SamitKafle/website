@@ -10,6 +10,9 @@
   <!-- Font Awesome for icons -->
   <script src="https://kit.fontawesome.com/a2c2cd6253.js" crossorigin="anonymous"></script>
 
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
   <style>
     body {
       font-family: 'Open Sans', sans-serif;
@@ -243,6 +246,8 @@
   <a href="#" onclick="showSection('members')"><i class="fas fa-users"></i> Lab Members</a>
   <a href="#" onclick="showSection('contact')"><i class="fas fa-envelope"></i> Contact</a>
 <a href="#" onclick="showSection('join')"><i class="fas fa-user-plus"></i> Join the Lab</a>
+<a href="#" onclick="showSection('map-section')"><i class="fas fa-map-marked-alt"></i> Study Map</a>
+
 
 </nav>
 
@@ -315,6 +320,7 @@
       <p>Combining TLS + i-Tree + NIRS estimates for 90 urban trees.</p>
     </div>
   </div>
+
 </section>
 
 
@@ -371,6 +377,7 @@
   <p><i class="fas fa-map-marker-alt"></i> Urban Forestry Lab, Auburn University</p>
 </section>
 
+
 <section id="join">
   <h2><i class="fas fa-handshake"></i> Join the Lab</h2>
   <p>
@@ -395,6 +402,12 @@
 
   </form>
 </section>
+
+<section id="map-section">
+  <h2>Study Site Map</h2>
+  <div id="map" style="height: 500px; border-radius: 10px; margin-top: 20px;"></div>
+</section>
+
 
 
 <footer>
@@ -422,6 +435,46 @@
 
   function closeLightbox() {
     document.getElementById('lightbox').style.display = 'none';
+  }
+</script>
+
+<script>
+  // Initialize map only once
+  let mapInitialized = false;
+  let map;
+
+  function initializeMap() {
+    if (mapInitialized) return;
+
+    map = L.map('map').setView([32.6099, -85.4808], 13); // Auburn, AL
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map);
+
+    L.marker([32.6099, -85.4808]).addTo(map)
+      .bindPopup('<b>Urban Forestry Lab</b><br>Auburn University');
+
+    mapInitialized = true;
+  }
+
+  function showSection(sectionId) {
+    const sections = document.querySelectorAll("section");
+    sections.forEach(sec => {
+      sec.classList.remove("active");
+      sec.style.display = 'none';
+    });
+    const target = document.getElementById(sectionId);
+    target.style.display = 'block';
+    setTimeout(() => {
+      target.classList.add("active");
+      if (sectionId === 'map-section') {
+        setTimeout(() => {
+          initializeMap();
+          map.invalidateSize();
+        }, 150);
+      }
+    }, 50);
   }
 </script>
 
