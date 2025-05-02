@@ -242,13 +242,39 @@
   <a href="#" onclick="showSection('publications')"><i class="fas fa-book"></i> Publications</a>
   <a href="#" onclick="showSection('members')"><i class="fas fa-users"></i> Lab Members</a>
   <a href="#" onclick="showSection('contact')"><i class="fas fa-envelope"></i> Contact</a>
+<a href="#" onclick="showSection('join')"><i class="fas fa-user-plus"></i> Join the Lab</a>
+
 </nav>
 
 <section id="home" class="active">
   <h2>Welcome</h2>
-  <p>We are a research group focused on advancing knowledge in urban forestry through cutting-edge technologies such as Terrestrial Laser Scanning (TLS) and Near-Infrared Spectroscopy (NIRS).</p>
+  <div style="display: flex; flex-wrap: wrap; gap: 30px; align-items: flex-start; justify-content: center;">
 
-  <h3>Photo Gallery</h3>
+    <!-- Text Block -->
+    <div style="flex: 1 1 400px; min-width: 300px;">
+      <p>
+        We are a research group focused on advancing knowledge in urban forestry through cutting-edge technologies such as
+        Terrestrial Laser Scanning (TLS), Near-Infrared Spectroscopy (NIRS), and tree-ring science. Our work supports sustainable
+        urban ecosystems and evidence-based arboricultural practices.
+      </p>
+    </div>
+
+    <!-- Embedded YouTube Video -->
+    <div style="flex: 1 1 400px; min-width: 300px;">
+      <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;">
+        <iframe
+          src="https://www.youtube.com/embed/7SzsJ5a7Ips"
+          frameborder="0"
+          allowfullscreen
+          style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border-radius: 10px;">
+        </iframe>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Existing Gallery Section -->
+  <h3 style="margin-top: 40px;">Photo Gallery</h3>
   <div class="gallery">
     <figure>
       <img src="image/lasersensor.jpg" onclick="openLightbox(this.src)">
@@ -267,11 +293,12 @@
       <figcaption>Scan Position</figcaption>
     </figure>
   </div>
+
+  <!-- Lightbox -->
   <div id="lightbox" onclick="closeLightbox()">
     <img id="lightbox-img" src="">
   </div>
 </section>
-
 <section id="research">
   <h2>Research Timeline</h2>
 
@@ -343,6 +370,32 @@
   <p><i class="fas fa-envelope"></i> szk0270@auburn.edu</p>
   <p><i class="fas fa-map-marker-alt"></i> Urban Forestry Lab, Auburn University</p>
 </section>
+
+<section id="join">
+  <h2><i class="fas fa-handshake"></i> Join the Lab</h2>
+  <p>
+    Interested in joining our team? Fill out this short form to tell us about yourself, and we’ll be in touch.
+  </p>
+
+  <form action="https://docs.google.com/forms/d/e/1FAIpQLSe8zAWG3-QlkJXw4FIL8NnzVf2hA2kB9loBD6ED7TUNxsFyXw/formResponse" method="POST" target="_blank">
+    <label for="Name">Full Name:</label><br>
+    <input type="text" name="Name" required style="width: 100%; padding: 8px; margin-bottom: 12px; border-radius: 4px; border: 1px solid #ccc;"><br>
+
+    <label for="Email">Email Address:</label><br>
+    <input type="email" name="entry.YYYYYYYYY" required style="width: 100%; padding: 8px; margin-bottom: 12px; border-radius: 4px; border: 1px solid #ccc;"><br>
+
+    <label for="Message">Message:</label><br>
+    <textarea name="entry.ZZZZZZZZZ" rows="5" required style="width: 100%; padding: 8px; border-radius: 4px; border: 1px solid #ccc;"></textarea><br><br>
+
+    <button type="submit" style="background-color: #E87722; color: white; padding: 10px 20px; border: none; border-radius: 5px; font-weight: bold;">
+      <i class="fas fa-paper-plane"></i> Submit Form
+
+
+    </button>
+
+  </form>
+</section>
+
 
 <footer>
   <p>&copy; 2025 Urban Forestry Lab | Auburn University</p>
