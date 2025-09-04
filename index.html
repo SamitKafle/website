@@ -1,482 +1,813 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth">
 <head>
-  <meta charset="UTF-8">
-  <title>Urban Forestry Lab | Auburn University</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Open+Sans&family=Rajdhani:wght@600&display=swap" rel="stylesheet">
-  <!-- Font Awesome for icons -->
-  <script src="https://kit.fontawesome.com/a2c2cd6253.js" crossorigin="anonymous"></script>
-
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Samit Kafle - Forestry & Geospatial Scientist</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+  />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&family=Montserrat:wght@400;700&display=swap"
+    rel="stylesheet"
+  />
   <style>
     body {
-      font-family: 'Open Sans', sans-serif;
+      font-family: "Inter", sans-serif;
+      background-color: #f8fafc;
       margin: 0;
-      background: #F4F4F4;
+    }
+    .hero-section {
+      background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)),
+        url(
+          "https://images.unsplash.com/photo-1501854140801-50d01698950b?q=80&w=1920&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+        )
+          no-repeat center center/cover;
+    }
+    .nav-link {
+      transition: color 0.3s ease;
+    }
+    .nav-link:hover {
+      color: #22c55e;
+    }
+    .section-title {
+      font-family: "Montserrat", sans-serif;
+      font-weight: 700;
     }
 
-    html {
-      scroll-behavior: smooth;
-    }
-
-    header {
+    /* Gallery Container */
+    .gallery-container {
       position: relative;
-      background: url('image/cover.png') center center / cover no-repeat;
-      padding: 40px 0;
-      color: white;
-    }
-
-    header .overlay {
-      position: absolute;
-      top: 0;
-      left: 0;
-      height: 100%;
-      width: 100%;
-      background-color: rgba(12, 35, 64, 0.8);
-      z-index: 1;
-    }
-
-    header .content {
-      position: relative;
-      z-index: 2;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 20px;
-      flex-wrap: wrap;
-      text-align: center;
-      padding: 0 20px;
-    }
-
-    .lab-title {
-      font-family: 'Rajdhani', sans-serif;
-      font-size: 2.8em;
-      letter-spacing: 1px;
-      margin: 0 0 5px 0;
-      text-transform: uppercase;
-    }
-
-    nav {
-      background: #0C2340;
       overflow: hidden;
-      position: sticky;
-      top: 0;
+      height: 600px;
+      max-width: 100%;
+      background: #fefefe;
+      border-radius: 0.5rem;
+      box-shadow: 0 10px 25px -7px rgba(0, 0, 0, 0.4);
+      display: flex;
+      flex-direction: column; /* vertical stack */
+    }
+    .gallery-slide-container {
+      position: relative;
+      flex-grow: 1; /* fills available height minus thumbnail area */
+    }
+    .gallery-slide {
+      display: none;
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 1rem;
+    }
+    .gallery-slide.active {
+      display: flex;
+    }
+    .gallery-slide img {
+      max-height: 100%;
+      max-width: 100%;
+      object-fit: contain !important;
+      border-radius: 0.5rem;
+      display: inline-block;
+      vertical-align: middle;
+      user-select: none;
+    }
+    .gallery-caption {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 1rem;
+      background-color: rgba(0,0,0,0.6);
+      color: #fff;
+      font-size: 0.9rem;
+      border-bottom-left-radius: 0.5rem;
+      border-bottom-right-radius: 0.5rem;
+      user-select: none;
+    }
+
+    /* Buttons */
+    #prevBtn, #nextBtn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(0,0,0,0.5);
+      border: none;
+      color: white;
+      font-size: 1.5rem;
+      padding: 0.5rem 0.75rem;
+      border-radius: 9999px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+      user-select: none;
       z-index: 10;
     }
-
-    nav a {
-      float: left;
-      display: block;
-      color: white;
-      text-align: center;
-      padding: 14px 20px;
-      text-decoration: none;
+    #prevBtn:hover, #nextBtn:hover {
+      background: rgba(0,0,0,0.75);
     }
+    #prevBtn { left: 1rem; }
+    #nextBtn { right: 1rem; }
 
-    nav a:hover {
-      background-color: #E87722;
-      color: white;
-    }
-
-    section {
-      display: none;
-      padding: 20px;
-      max-width: 1000px;
-      margin: auto;
+    /* Thumbnails container fixed below main slide */
+    .thumbnails {
+      margin-top: 0.5rem;
+      padding: 0 1rem 0.75rem 1rem;
+      display: flex;
+      justify-content: center;
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      gap: 0.5rem;
+      user-select: none;
+      border-top: 1px solid #e5e7eb; /* light gray border above thumbnails */
       background: white;
+      border-bottom-left-radius: 0.5rem;
+      border-bottom-right-radius: 0.5rem;
+    }
+    .thumbnails::-webkit-scrollbar {
+      height: 6px;
+    }
+    .thumbnails::-webkit-scrollbar-thumb {
+      background-color: #22c55e;
+      border-radius: 3px;
+    }
+    .thumbnails img {
+      width: 80px;
+      height: 48px;
+      object-fit: contain;
+      border-radius: 0.375rem;
+      cursor: pointer;
+      border: 2px solid transparent;
+      transition: border-color 0.3s ease;
+      flex-shrink: 0;
+    }
+    .thumbnails img.active {
+      border-color: #22c55e;
+    }
+
+    .fade-in {
       opacity: 0;
       transform: translateY(20px);
-      transition: all 0.5s ease-in-out;
+      transition: opacity 0.6s ease-out, transform 0.6s ease-out;
     }
 
-    section.active {
-      display: block;
+    .fade-in.visible {
       opacity: 1;
       transform: translateY(0);
     }
 
-    h2 {
-      color: #E87722;
+    header.shrink {
+      padding: 0.5rem 1.5rem !important;
+      background-color: rgba(255,255,255,0.95) !important;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      transition: padding 0.3s ease, background-color 0.3s ease;
     }
 
-    ul {
-      line-height: 1.8;
-    }
-
-    .gallery {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 15px;
-      margin-top: 20px;
-    }
-
-    .gallery figure {
-      margin: 0;
-      text-align: center;
-    }
-
-    .gallery img {
-      width: 100%;
-      height: 180px;
-      object-fit: cover;
-      border-radius: 8px;
-      border: 2px solid #ccc;
-      cursor: pointer;
-      transition: transform 0.3s ease;
-    }
-
-    .gallery img:hover {
-      transform: scale(1.05);
-      border-color: #E87722;
-    }
-
-    .gallery figcaption {
-      font-size: 0.9em;
-      color: #333;
-      margin-top: 6px;
-      font-style: italic;
-    }
-
-    #lightbox {
-      display: none;
+    /* Modal Styles */
+    #modal {
       position: fixed;
-      z-index: 999;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0,0,0,0.8);
+      inset: 0;
+      background-color: rgba(0, 0, 0, 0.8);
+      display: none;
       justify-content: center;
       align-items: center;
+      z-index: 50;
     }
-
-    #lightbox img {
-      max-width: 90%;
-      max-height: 90%;
-      border: 4px solid white;
-      border-radius: 10px;
+    #modal img {
+      max-height: 90vh;
+      max-width: 90vw;
+      border-radius: 0.5rem;
+      box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
     }
-
-    /* Timeline */
-    .timeline {
-      position: relative;
-      padding-left: 30px;
-      border-left: 3px solid #E87722;
-      margin-top: 20px;
-    }
-
-    .timeline-event {
-      margin-bottom: 20px;
-    }
-
-    .timeline-event h4 {
-      margin: 0;
-      color: #0C2340;
-    }
-
-    .timeline-event p {
-      margin: 4px 0 0 0;
-    }
-
-    /* Lab member cards */
-    .team {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 30px;
-      justify-content: center;
-      margin-top: 20px;
-    }
-
-    .member-card {
-      background: #fff;
-      border-radius: 10px;
-      padding: 15px;
-      width: 220px;
-      text-align: center;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-      transition: transform 0.3s;
-    }
-
-    .member-card:hover {
-      transform: scale(1.03);
-    }
-
-    .member-card img {
-      width: 120px;
-      height: 120px;
-      object-fit: cover;
-      border-radius: 50%;
-      margin-bottom: 10px;
-      border: 3px solid #0C2340;
-    }
-
-    footer {
-      background: #0C2340;
+    #modal-close {
+      position: absolute;
+      top: 1.25rem;
+      right: 1.25rem;
       color: white;
-      text-align: center;
-      padding: 15px;
-      margin-top: 20px;
+      font-size: 2rem;
+      font-weight: bold;
+      cursor: pointer;
+      background: none;
+      border: none;
+      padding: 0;
+      user-select: none;
+    }
+
+    /* Social icons container in hero */
+    .social-icons {
+      margin-top: 1.5rem;
+      display: flex;
+      justify-content: center;
+      gap: 1.5rem;
+    }
+    .social-icons a {
+      color: white;
+      font-size: 1.8rem;
+      transition: color 0.3s ease;
+    }
+    .social-icons a:hover {
+      color: #22c55e;
+    }
+    /* CV Download Button */
+    .cv-download {
+      margin-top: 1rem;
+      display: inline-flex;
+      align-items: center;
+      background-color: #22c55e;
+      color: white;
+      padding: 0.75rem 1.5rem;
+      border-radius: 0.5rem;
+      font-weight: 600;
+      text-decoration: none;
+      font-size: 1rem;
+      transition: background-color 0.3s ease;
+      user-select: none;
+    }
+    .cv-download i {
+      margin-right: 0.5rem;
+    }
+    .cv-download:hover {
+      background-color: #16a34a;
     }
   </style>
 </head>
-
-<body>
-
-<header>
-  <div class="overlay"></div>
-  <div class="content">
-    <img src="image/au.png" alt="Lab Logo" style="height: 100px;">
-    <div>
-      <h1 class="lab-title">Urban Forestry Lab</h1>
-      <p style="margin: 0 0 2px 0;">College of Forestry, Wildlife and Environment</p>
-      <p style="margin: 0;"><i class="fas fa-map-marker-alt"></i> Auburn University</p>
-    </div>
-  </div>
-</header>
-
-<nav>
-  <a href="#" onclick="showSection('home')"><i class="fas fa-home"></i> Home</a>
-  <a href="#" onclick="showSection('research')"><i class="fas fa-flask"></i> Research</a>
-  <a href="#" onclick="showSection('publications')"><i class="fas fa-book"></i> Publications</a>
-  <a href="#" onclick="showSection('members')"><i class="fas fa-users"></i> Lab Members</a>
-  <a href="#" onclick="showSection('contact')"><i class="fas fa-envelope"></i> Contact</a>
-<a href="#" onclick="showSection('join')"><i class="fas fa-user-plus"></i> Join the Lab</a>
-<a href="#" onclick="showSection('map-section')"><i class="fas fa-map-marked-alt"></i> Study Map</a>
-
-
-</nav>
-
-<section id="home" class="active">
-  <h2>Welcome</h2>
-  <div style="display: flex; flex-wrap: wrap; gap: 30px; align-items: flex-start; justify-content: center;">
-
-    <!-- Text Block -->
-    <div style="flex: 1 1 400px; min-width: 300px;">
-      <p>
-        We are a research group focused on advancing knowledge in urban forestry through cutting-edge technologies such as
-        Terrestrial Laser Scanning (TLS), Near-Infrared Spectroscopy (NIRS), and tree-ring science. Our work supports sustainable
-        urban ecosystems and evidence-based arboricultural practices.
-      </p>
-    </div>
-
-    <!-- Embedded YouTube Video -->
-    <div style="flex: 1 1 400px; min-width: 300px;">
-      <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;">
-        <iframe
-          src="https://www.youtube.com/embed/7SzsJ5a7Ips"
-          frameborder="0"
-          allowfullscreen
-          style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border-radius: 10px;">
-        </iframe>
+<body class="text-gray-800">
+  <!-- Header & Navigation -->
+  <header
+    class="bg-white/80 backdrop-blur-md shadow-md sticky top-0 z-50 py-4 px-6 transition-all duration-300"
+  >
+    <nav class="container mx-auto flex justify-between items-center">
+      <a href="#" class="text-2xl font-bold text-gray-800">Samit Kafle</a>
+      <div class="hidden md:flex space-x-8">
+        <a href="#gallery" class="nav-link text-gray-600">Gallery</a>
+        <a href="#summary" class="nav-link text-gray-600">Summary</a>
+        <a href="#skills" class="nav-link text-gray-600">Skills</a>
+        <a href="#experience" class="nav-link text-gray-600">Experience</a>
+        <a href="#research" class="nav-link text-gray-600">Research</a>
       </div>
+      <button id="mobile-menu-button" class="md:hidden flex items-center">
+        <i class="fas fa-bars text-2xl"></i>
+      </button>
+    </nav>
+    <div id="mobile-menu" class="hidden md:hidden px-6 pb-4 animate-slide-in">
+      <a href="#gallery" class="block py-2 text-gray-600">Gallery</a>
+      <a href="#summary" class="block py-2 text-gray-600">Summary</a>
+      <a href="#skills" class="block py-2 text-gray-600">Skills</a>
+      <a href="#experience" class="block py-2 text-gray-600">Experience</a>
+      <a href="#research" class="block py-2 text-gray-600">Research</a>
     </div>
+  </header>
 
-  </div>
-
-  <!-- Existing Gallery Section -->
-  <h3 style="margin-top: 40px;">Photo Gallery</h3>
-  <div class="gallery">
-    <figure>
-      <img src="image/lasersensor.jpg" onclick="openLightbox(this.src)">
-      <figcaption>TLS Head</figcaption>
-    </figure>
-    <figure>
-      <img src="image/leveling.jpg" onclick="openLightbox(this.src)">
-      <figcaption>Leveling laser scanner</figcaption>
-    </figure>
-    <figure>
-      <img src="image/pointcloud.jpg" onclick="openLightbox(this.src)">
-      <figcaption>Point Cloud</figcaption>
-    </figure>
-    <figure>
-      <img src="image/scan position2.jpg" onclick="openLightbox(this.src)">
-      <figcaption>Scan Position</figcaption>
-    </figure>
-  </div>
-
-  <!-- Lightbox -->
-  <div id="lightbox" onclick="closeLightbox()">
-    <img id="lightbox-img" src="">
-  </div>
-</section>
-<section id="research">
-  <h2>Research Timeline</h2>
-
-    <div class="timeline-event">
-      <h4>2024 – Core Collection Begins</h4>
-      <p>Extracted tree cores from urban parks and street trees.</p>
+  <!-- Hero Section -->
+  <section
+    class="hero-section text-white h-[60vh] flex flex-col items-center justify-center relative overflow-hidden px-4 text-center"
+  >
+    <h1 class="text-4xl md:text-6xl font-extrabold mb-4 animate-fade-in-down">
+      SAMIT KAFLE
+    </h1>
+    <p id="typewriter" class="text-xl md:text-2xl font-light mt-2 min-h-[40px]"></p>
+    <p class="text-lg md:text-xl font-light mt-2">
+      College of Forestry, Wildlife & Environment, Auburn University
+    </p>
+    <div class="social-icons" aria-label="Social and contact links">
+      <a
+        href="https://scholar.google.com/citations?user=YOUR_GOOGLE_SCHOLAR_ID"
+        target="_blank"
+        aria-label="Google Scholar"
+        title="Google Scholar"
+        rel="noopener noreferrer"
+      >
+        <i class="fas fa-graduation-cap"></i>
+      </a>
+      <a href="mailto:samitkafle67@gmail.com" aria-label="Email" title="Email">
+        <i class="fas fa-envelope"></i>
+      </a>
+      <a
+        href="https://www.linkedin.com/in/samit-kafle/"
+        target="_blank"
+        aria-label="LinkedIn"
+        title="LinkedIn"
+        rel="noopener noreferrer"
+      >
+        <i class="fab fa-linkedin"></i>
+      </a>
     </div>
-    <div class="timeline-event">
-      <h4>2025 – CHN Analyzer Integration</h4>
-      <p>Carbon content analysis of wood samples.</p>
+    <a
+      href="files/samit_kafle_cv.pdf"
+      download
+      class="cv-download"
+      aria-label="Download CV"
+      > <i class="fas fa-download"></i>Download CV</a
+    >
+  </section>
+
+  <main class="container mx-auto px-6 py-12">
+    <!-- Picture Gallery -->
+    <section id="gallery" class="mb-16 fade-in relative">
+      <h2 class="section-title text-3xl text-center mb-8">Research Gallery</h2>
+      <div class="gallery-container max-w-5xl mx-auto rounded-lg shadow-2xl relative">
+        <div class="gallery-slide-container">
+          <div class="gallery-slide active cursor-pointer" tabindex="0">
+            <img
+              src="images/image1.jpg"
+              alt="Terrestrial Laser Scanning"
+              loading="lazy"
+              onerror="this.onerror=null;this.src='https://placehold.co/1200x600/6B8E23/FFFFFF?text=Add+Your+Image+Here';"
+            />
+            <div class="gallery-caption">
+              Presenting research poster at 83rd ISA southern chapter annual
+              conference - 2025
+            </div>
+          </div>
+          <div class="gallery-slide cursor-pointer" tabindex="0">
+            <img
+              src="images/image2.jpg"
+              alt="Attending Alabama STEM science expo-2025"
+              loading="lazy"
+              onerror="this.onerror=null;this.src='https://placehold.co/1200x600/2E8B57/FFFFFF?text=Add+Your+Image+Here';"
+            />
+            <div class="gallery-caption">
+              Attending Alabama STEM science expo - 2025
+            </div>
+          </div>
+          <div class="gallery-slide cursor-pointer" tabindex="0">
+            <img
+              src="images/image3.jpg"
+              alt="Alabama STEM expo-2025"
+              loading="lazy"
+              onerror="this.onerror=null;this.src='https://placehold.co/1200x600/556B2F/FFFFFF?text=Add+Your+Image+Here';"
+            />
+            <div class="gallery-caption">Alabama STEM expo - 2025</div>
+          </div>
+          <div class="gallery-slide cursor-pointer" tabindex="0">
+            <img
+              src="images/image4.jpg"
+              alt="Extracting cores from Quercus lyrata at the crown base"
+              loading="lazy"
+              onerror="this.onerror=null;this.src='https://placehold.co/1200x600/8FBC8F/FFFFFF?text=Add+Your+Image+Here';"
+            />
+            <div class="gallery-caption">
+              Extracting cores from Quercus lyrata at the crown base
+            </div>
+          </div>
+          <div class="gallery-slide cursor-pointer" tabindex="0">
+            <img
+              src="images/image5.jpg"
+              alt="Extracting cores"
+              loading="lazy"
+              onerror="this.onerror=null;this.src='https://placehold.co/1200x600/9ACD32/FFFFFF?text=Add+Your+Image+Here';"
+            />
+            <div class="gallery-caption">Extracting cores</div>
+          </div>
+          <div class="gallery-slide cursor-pointer" tabindex="0">
+            <img
+              src="images/image6.jpg"
+              alt="Conducting leaf off scans of Taxodium distichum using TLS"
+              loading="lazy"
+              onerror="this.onerror=null;this.src='https://placehold.co/1200x600/3CB371/FFFFFF?text=Add+Your+Image+Here';"
+            />
+            <div class="gallery-caption">
+              Conducting leaf off scans of Taxodium distichum using TLS
+            </div>
+          </div>
+          <div class="gallery-slide cursor-pointer" tabindex="0">
+            <img
+              src="images/image7.jpg"
+              alt="Hand after whole day coring hardwoods"
+              loading="lazy"
+              onerror="this.onerror=null;this.src='https://placehold.co/1200x600/6B8E23/FFFFFF?text=Add+Your+Image+Here';"
+            />
+            <div class="gallery-caption">Hand after whole day coring hardwoods</div>
+          </div>
+          <div class="gallery-slide cursor-pointer" tabindex="0">
+            <img
+              src="images/image8.jpg"
+              alt="Preparing woody samples from core to analyze carbon content using elemental analyzer"
+              loading="lazy"
+              onerror="this.onerror=null;this.src='https://placehold.co/1200x600/556B2F/FFFFFF?text=Add+Your+Image+Here';"
+            />
+            <div class="gallery-caption">
+              Preparing woody samples from core to analyze carbon content using elemental
+              analyzer
+            </div>
+          </div>
+          <div class="gallery-slide cursor-pointer" tabindex="0">
+            <img
+              src="images/image9.jpg"
+              alt="Plantation with high school students at Auburn"
+              loading="lazy"
+              onerror="this.onerror=null;this.src='https://placehold.co/1200x600/8FBC8F/FFFFFF?text=Add+Your+Image+Here';"
+            />
+            <div class="gallery-caption">
+              Plantation with high school students at Auburn
+            </div>
+          </div>
+
+          <button
+            id="prevBtn"
+            aria-label="Previous Image"
+            title="Previous"
+            type="button"
+          >
+            <i class="fas fa-chevron-left"></i>
+          </button>
+          <button
+            id="nextBtn"
+            aria-label="Next Image"
+            title="Next"
+            type="button"
+          >
+            <i class="fas fa-chevron-right"></i>
+          </button>
+        </div>
+
+        <!-- Thumbnails below the image container -->
+        <div
+          class="thumbnails"
+          role="list"
+          aria-label="Gallery Thumbnails"
+          tabindex="0"
+        >
+          <img
+            src="images/image1.jpg"
+            alt="Thumbnail 1"
+            class="active"
+            loading="lazy"
+            role="listitem"
+            tabindex="0"
+          />
+          <img
+            src="images/image2.jpg"
+            alt="Thumbnail 2"
+            loading="lazy"
+            role="listitem"
+            tabindex="0"
+          />
+          <img
+            src="images/image3.jpg"
+            alt="Thumbnail 3"
+            loading="lazy"
+            role="listitem"
+            tabindex="0"
+          />
+          <img
+            src="images/image4.jpg"
+            alt="Thumbnail 4"
+            loading="lazy"
+            role="listitem"
+            tabindex="0"
+          />
+          <img
+            src="images/image5.jpg"
+            alt="Thumbnail 5"
+            loading="lazy"
+            role="listitem"
+            tabindex="0"
+          />
+          <img
+            src="images/image6.jpg"
+            alt="Thumbnail 6"
+            loading="lazy"
+            role="listitem"
+            tabindex="0"
+          />
+          <img
+            src="images/image7.jpg"
+            alt="Thumbnail 7"
+            loading="lazy"
+            role="listitem"
+            tabindex="0"
+          />
+          <img
+            src="images/image8.jpg"
+            alt="Thumbnail 8"
+            loading="lazy"
+            role="listitem"
+            tabindex="0"
+          />
+          <img
+            src="images/image9.jpg"
+            alt="Thumbnail 9"
+            loading="lazy"
+            role="listitem"
+            tabindex="0"
+          />
+        </div>
+      </div>
+    </section>
+
+    <!-- The rest of your content for summary, skills, experience, research publications... -->
+
+    <!-- Professional Summary -->
+    <section id="summary" class="mb-16 fade-in">
+      <h2 class="section-title text-3xl text-center mb-8">Professional Summary</h2>
+      <div class="max-w-4xl mx-auto bg-white p-8 rounded-lg shadow-lg">
+        <p class="text-lg leading-relaxed text-gray-700">
+          Master of Science candidate specializing in forestry, with advanced skills in carbon stock quantification, geospatial analysis, and remote sensing (LiDAR, satellite imagery). Proficient in R, Python, and advanced statistical modeling for spatial and carbon analysis, with hands-on experience developing TLS data processing tools and applying these to urban forestry carbon dynamics. Eager to apply research expertise and technical capabilities to address complex environmental challenges and contribute to innovative forestry solutions.
+        </p>
+      </div>
+    </section>
+
+    <!-- Core Competencies (no progress bars) -->
+    <section id="skills" class="mb-16 fade-in">
+      <h2 class="section-title text-3xl text-center mb-8">Core Competencies</h2>
+      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div class="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
+          <div class="flex items-center mb-4">
+            <i class="fas fa-seedling text-3xl text-green-600 mr-4"></i>
+            <h3 class="text-xl font-bold">Carbon Quantification</h3>
+          </div>
+          <ul class="list-disc list-inside text-gray-600 space-y-2">
+            <li>Biomass & carbon stock quantification (TLS, i-Tree)</li>
+            <li>Near-Infrared Spectroscopy (NIRS) & Elemental Analysis</li>
+            <li>Development of R packages for TLS data processing</li>
+          </ul>
+        </div>
+        <div class="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
+          <div class="flex items-center mb-4">
+            <i class="fas fa-globe-americas text-3xl text-blue-600 mr-4"></i>
+            <h3 class="text-xl font-bold">Geospatial & Remote Sensing</h3>
+          </div>
+          <ul class="list-disc list-inside text-gray-600 space-y-2">
+            <li>Spatial analysis & modeling (R, Python, ArcGIS Pro, QGIS)</li>
+            <li>Airborne LiDAR & Satellite Imagery analysis</li>
+            <li>GIS programming, web mapping, & interactive visualization</li>
+          </ul>
+        </div>
+        <div class="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
+          <div class="flex items-center mb-4">
+            <i class="fas fa-cogs text-3xl text-gray-600 mr-4"></i>
+            <h3 class="text-xl font-bold">Research & Technical Skills</h3>
+          </div>
+          <ul class="list-disc list-inside text-gray-600 space-y-2">
+            <li>Advanced statistical methods (mixed-effects models)</li>
+            <li>Field data collection & Dendrochronology</li>
+            <li>High-quality data visualization and publication</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Experience -->
+    <section id="experience" class="mb-16 fade-in">
+      <h2 class="section-title text-3xl text-center mb-8">Professional Experience</h2>
+      <div class="max-w-4xl mx-auto">
+        <div class="relative border-l-2 border-green-500 pl-8 pb-8">
+          <!-- Experience items here... -->
+          <!-- Item 1 -->
+          <div class="mb-8">
+            <div class="absolute w-4 h-4 bg-green-500 rounded-full -left-2 mt-1"></div>
+            <p class="text-sm text-gray-500">Spring 2024 – Present</p>
+            <h3 class="text-xl font-bold">Graduate Research Assistant</h3>
+            <p class="text-md font-medium text-gray-700">Auburn University</p>
+            <p class="text-gray-600 mt-2">Conducting research on urban forest carbon dynamics using TLS and NIRS to quantify carbon stocks and assess environmental impacts.</p>
+          </div>
+          <!-- Item 2 -->
+          <div class="mb-8">
+            <div class="absolute w-4 h-4 bg-green-500 rounded-full -left-2 mt-1"></div>
+            <p class="text-sm text-gray-500">Fall 2024</p>
+            <h3 class="text-xl font-bold">Graduate Teaching Assistant, Forest Resource Sampling</h3>
+            <p class="text-md font-medium text-gray-700">Auburn University</p>
+            <p class="text-gray-600 mt-2">Conducting field experiments related to forest inventory and grading.</p>
+          </div>
+          <!-- Item 3 -->
+          <div class="mb-8">
+            <div class="absolute w-4 h-4 bg-green-500 rounded-full -left-2 mt-1"></div>
+            <p class="text-sm text-gray-500">Feb - July 2022</p>
+            <h3 class="text-xl font-bold">Internship</h3>
+            <p class="text-md font-medium text-gray-700">Ministry of Forest and Environment, Nepal</p>
+            <p class="text-gray-600 mt-2">Assisted in publishing Nepal’s Landcover Map, collected data for land restoration, organized forestry inventories, and conducted biomass calculations.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Research Publications Gallery -->
+    <section id="research" class="mb-16 fade-in">
+      <h2 class="section-title text-3xl text-center mb-8">Research Publications</h2>
+      <div class="max-w-5xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
+        <div class="bg-white rounded-lg shadow-md overflow-hidden flex flex-col">
+          <img
+            src="images/joshi.jpg"
+            alt="Article 1 front page"
+            class="w-full h-56 object-cover"
+          />
+          <div class="p-4 flex flex-col flex-grow">
+            <p class="text-gray-700 flex-grow">
+              Joshi, D. P., Ayer, S., <strong>Kafle, S.</strong>, et al. (2025).
+              Climate-driven elevational range shift and habitat loss of
+              Ageratina adenophora in Nepal.
+            </p>
+            <a href="https://doi.org/10.1016/j.ecofro.2025.05.003" target="_blank" class="mt-4 inline-block text-green-600 hover:underline font-semibold">View Publication</a>
+          </div>
+        </div>
+        <div class="bg-white rounded-lg shadow-md overflow-hidden flex flex-col">
+          <img
+            src="images/kharel.jpg"
+            alt="Article 2 front page"
+            class="w-full h-56 object-cover"
+          />
+          <div class="p-4 flex flex-col flex-grow">
+            <p class="text-gray-700 flex-grow">
+              Kharel, B., Ayer, S., <strong>Kafle, S.</strong>, et al. (2024).
+              Current and future habitat suitability modelling of Bambusa teres
+              outside forest areas in Nepal.
+            </p>
+            <a href="https://doi.org/10.1016/j.bamboo.2024.100112" target="_blank" class="mt-4 inline-block text-green-600 hover:underline font-semibold">View Publication</a>
+          </div>
+        </div>
+        <div class="bg-white rounded-lg shadow-md overflow-hidden flex flex-col">
+          <img
+            src="images/kafle.jpg"
+            alt="Article 3 front page"
+            class="w-full h-56 object-cover"
+          />
+          <div class="p-4 flex flex-col flex-grow">
+            <p class="text-gray-700 flex-grow">
+              <strong>Kafle, S.</strong>, K.C., S., et al. (2023). Machine learning
+              approach to detect Land Use Land Cover (LULC) change in Chure
+              region of Sarlahi district, Nepal.
+            </p>
+            <a href="https://dx.doi.org/10.26832/24566632.2023.0802012" target="_blank" class="mt-4 inline-block text-green-600 hover:underline font-semibold">View Publication</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-gray-800 text-white py-12">
+    <div class="container mx-auto px-6 text-center">
+      <p class="text-gray-500">&copy; <span id="year"></span> Samit Kafle. All Rights Reserved.</p>
     </div>
-    <div class="timeline-event">
-      <h4>2025 – Comparative Carbon Estimation</h4>
-      <p>Combining TLS + i-Tree + NIRS estimates for 90 urban trees.</p>
-    </div>
-  </div>
+  </footer>
 
-</section>
-
-
-<section id="publications">
-  <h2>Publications</h2>
-  <ul>
-    <li><i class="fas fa-file-alt"></i> <b>Arseniou, G.</b>, & MacFarlane, D. W. (2021). Fractal dimension of tree crowns explains species functional‐trait responses to urban environments at different scales. <i>Ecological Applications </i>, 31(4), e02297 <a href="https://doi.org/10.1002/eap.2297" target="_blank">[Link]</a></li>
-    <li><i class="fas fa-file-alt"></i> Kharel, B., Ayer, <b>S., Kafle</b>, S., Timilsina, S., Bhatta, K. P., Gautam, J., ... & Airee, J. (2024). Current and future habitat suitability modelling of Bambusa teres outside forest areas in Nepal under climate change scenarios.<i> Advances in Bamboo Science </i>, 9,100112<a href="https://www.sciencedirect.com/science/article/pii/S2773139124000570" target="_blank">[Link]</a></li>
-
-    
-<li><i class="fas fa-file-alt"></i> <b>Kafle, S.</b>, Sandeep, K. C., Poudyal, B., & Devkota, S. (2023). Machine learning approach to detect land use land cover (LULC) change in Chure region of Sarlahi district, Nepal. <i>Archives of Agriculture and Environmental Science, 8(2), 168-174</i>.</li>
-
-  </ul>
-</section>
-
-<section id="members">
-  <h2>Lab Members</h2>
-
-  <!-- Lab Head -->
-  <h3><i class="fas fa-user-tie"></i> Lab Head</h3>
-  <div class="team">
-    <div class="member-card">
-      <img src="image/ga.jpg" alt="Dr. Georgios Arseniou">
-      <h4>Dr. Georgios Arseniou</h4>
-      <p>Assistant Professor & Extension Specialist</p>
-      <p style="font-style: italic; font-size: 0.9em;">"Advancing arboriculture and urban forestry."</p>
-    </div>
-  </div>
-
-  <!-- Graduate Students -->
-  <h3><i class="fas fa-user-graduate"></i> Graduate Students</h3>
-  <div class="team">
-    <!-- Samit -->
-    <div class="member-card">
-      <img src="image/cover.png" alt="Samit Kafle">
-      <h4>Samit Kafle</h4>
-      <p>Graduate Research Assistant</p>
-      <p style="font-style: italic; font-size: 0.9em;">"Exploring urban tree carbon stocks using novel Terrestrial Laser Scanning Technology."</p>
-    </div>
-
-    <!-- Additional Graduate Student -->
-    <div class="member-card">
-      <img src="image/logo.webp" alt="Future Grad Student">
-      <h4>Naga Spurthi Acharam</h4>
-      <p>Graduate Research Assistant</p>
-      <p style="font-style: italic; font-size: 0.9em;">"Codominant."</p>
-    </div>
-  </div>
-</section>
-
-<section id="contact">
-  <h2>Contact Us</h2>
-  <p><i class="fas fa-envelope"></i> szk0270@auburn.edu</p>
-  <p><i class="fas fa-map-marker-alt"></i> Urban Forestry Lab, Auburn University</p>
-</section>
-
-
-<section id="join">
-  <h2><i class="fas fa-handshake"></i> Join the Lab</h2>
-  <p>
-    Interested in joining our team? Fill out this short form to tell us about yourself, and we’ll be in touch.
-  </p>
-
-  <form action="https://docs.google.com/forms/d/e/1FAIpQLSe8zAWG3-QlkJXw4FIL8NnzVf2hA2kB9loBD6ED7TUNxsFyXw/formResponse" method="POST" target="_blank">
-    <label for="Name">Full Name:</label><br>
-    <input type="text" name="Name" required style="width: 100%; padding: 8px; margin-bottom: 12px; border-radius: 4px; border: 1px solid #ccc;"><br>
-
-    <label for="Email">Email Address:</label><br>
-    <input type="email" name="entry.YYYYYYYYY" required style="width: 100%; padding: 8px; margin-bottom: 12px; border-radius: 4px; border: 1px solid #ccc;"><br>
-
-    <label for="Message">Message:</label><br>
-    <textarea name="entry.ZZZZZZZZZ" rows="5" required style="width: 100%; padding: 8px; border-radius: 4px; border: 1px solid #ccc;"></textarea><br><br>
-
-    <button type="submit" style="background-color: #E87722; color: white; padding: 10px 20px; border: none; border-radius: 5px; font-weight: bold;">
-      <i class="fas fa-paper-plane"></i> Submit Form
-
-
+  <!-- Image Modal -->
+  <div
+    id="modal"
+    class="fixed inset-0 bg-black bg-opacity-80 flex justify-center items-center hidden z-50"
+  >
+    <img
+      id="modal-img"
+      class="max-h-full max-w-full rounded-lg shadow-lg"
+      alt="Fullscreen Image"
+    />
+    <button
+      id="modal-close"
+      class="absolute top-5 right-5 text-white text-3xl font-bold cursor-pointer"
+      aria-label="Close"
+    >
+      &times;
     </button>
+  </div>
 
-  </form>
-</section>
-
-<section id="map-section">
-  <h2>Study Site Map</h2>
-  <div id="map" style="height: 500px; border-radius: 10px; margin-top: 20px;"></div>
-</section>
-
-
-
-<footer>
-  <p>&copy; 2025 Urban Forestry Lab | Auburn University</p>
-</footer>
-
-<script>
-  function showSection(sectionId) {
-    const sections = document.querySelectorAll("section");
-    sections.forEach(sec => {
-      sec.classList.remove("active");
-      sec.style.display = 'none';
+  <script>
+    // Mobile menu toggle
+    const mobileMenuButton = document.getElementById("mobile-menu-button");
+    const mobileMenu = document.getElementById("mobile-menu");
+    mobileMenuButton.addEventListener("click", () => {
+      mobileMenu.classList.toggle("hidden");
     });
-    const target = document.getElementById(sectionId);
-    target.style.display = 'block';
-    setTimeout(() => {
-      target.classList.add("active");
-    }, 50);
-  }
-
-  function openLightbox(src) {
-    document.getElementById('lightbox').style.display = 'flex';
-    document.getElementById('lightbox-img').src = src;
-  }
-
-  function closeLightbox() {
-    document.getElementById('lightbox').style.display = 'none';
-  }
-</script>
-
-<script>
-  // Initialize map only once
-  let mapInitialized = false;
-  let map;
-
-  function initializeMap() {
-    if (mapInitialized) return;
-
-    map = L.map('map').setView([32.6099, -85.4808], 13); // Auburn, AL
-
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '&copy; OpenStreetMap contributors'
-    }).addTo(map);
-
-    L.marker([32.6099, -85.4808]).addTo(map)
-      .bindPopup('<b>Urban Forestry Lab</b><br>Auburn University');
-
-    mapInitialized = true;
-  }
-
-  function showSection(sectionId) {
-    const sections = document.querySelectorAll("section");
-    sections.forEach(sec => {
-      sec.classList.remove("active");
-      sec.style.display = 'none';
+    document.querySelectorAll("#mobile-menu a, .nav-link").forEach((link) => {
+      link.addEventListener("click", () => {
+        mobileMenu.classList.add("hidden");
+      });
     });
-    const target = document.getElementById(sectionId);
-    target.style.display = 'block';
-    setTimeout(() => {
-      target.classList.add("active");
-      if (sectionId === 'map-section') {
-        setTimeout(() => {
-          initializeMap();
-          map.invalidateSize();
-        }, 150);
+
+    // Set footer year
+    document.getElementById("year").textContent = new Date().getFullYear();
+
+    // Gallery slideshow
+    const slides = document.querySelectorAll(".gallery-slide");
+    const prevBtn = document.getElementById("prevBtn");
+    const nextBtn = document.getElementById("nextBtn");
+    const thumbnails = document.querySelectorAll(".thumbnails img");
+    let currentSlide = 0;
+
+    function showSlide(index) {
+      if (index < 0) index = slides.length - 1;
+      else if (index >= slides.length) index = 0;
+      currentSlide = index;
+      slides.forEach((slide, i) => {
+        slide.classList.toggle("active", i === currentSlide);
+      });
+      thumbnails.forEach((thumb, i) => {
+        thumb.classList.toggle("active", i === currentSlide);
+      });
+    }
+
+    prevBtn.addEventListener("click", () => {
+      showSlide(currentSlide - 1);
+    });
+
+    nextBtn.addEventListener("click", () => {
+      showSlide(currentSlide + 1);
+    });
+
+    thumbnails.forEach((thumb, i) => {
+      thumb.addEventListener("click", () => {
+        showSlide(i);
+      });
+    });
+
+    // Auto-play every 5 seconds
+    setInterval(() => {
+      showSlide(currentSlide + 1);
+    }, 5000);
+
+    // Typewriter effect
+    const phrases = [
+      "MS, Forestry | Geospatial & Remote Sensing Specialist",
+      "Carbon Stock Quantification Expert",
+      "Urban Forestry Researcher",
+      "GIS & LiDAR Enthusiast",
+    ];
+    let i = 0,
+      j = 0,
+      currentPhrase = "",
+      isDeleting = false;
+    const typeSpeed = 100,
+      deleteSpeed = 50,
+      waitTime = 2000;
+    const typewriter = document.getElementById("typewriter");
+
+    function type() {
+      if (i >= phrases.length) i = 0;
+      currentPhrase = phrases[i];
+      if (!isDeleting) {
+        typewriter.textContent = currentPhrase.substring(0, j + 1);
+        j++;
+        if (j === currentPhrase.length) {
+          isDeleting = true;
+          setTimeout(type, waitTime);
+          return;
+        }
+      } else {
+        typewriter.textContent = currentPhrase.substring(0, j - 1);
+        j--;
+        if (j === 0) {
+          isDeleting = false;
+          i++;
+        }
       }
-    }, 50);
-  }
-</script>
+      setTimeout(type, isDeleting ? deleteSpeed : typeSpeed);
+    }
+    type();
 
+    // Modal for fullscreen images
+    const modal = document.getElementById("modal");
+    const modalImg = document.getElementById("modal-img");
+    const modalClose = document.getElementById("modal-close");
+
+    slides.forEach((slide) => {
+      slide.querySelector("img").style.cursor = "pointer";
+      slide.querySelector("img").addEventListener("click", () => {
+        modalImg.src = slide.querySelector("img").src;
+        modal.style.display = "flex";
+      });
+    });
+
+    modalClose.addEventListener("click", () => {
+      modal.style.display = "none";
+      modalImg.src = "";
+    });
+
+    modal.addEventListener("click", (e) => {
+      if (e.target === modal) {
+        modal.style.display = "none";
+        modalImg.src = "";
+      }
+    });
+
+    // Shrink header on scroll
+    window.addEventListener("scroll", () => {
+      const header = document.querySelector("header");
+      if (window.scrollY > 80) {
+        header.classList.add("shrink");
+      } else {
+        header.classList.remove("shrink");
+      }
+    });
+
+    // Fade in on scroll
+    const faders = document.querySelectorAll(".fade-in");
+    const appearOptions = {
+      threshold: 0.1,
+      rootMargin: "0px 0px -50px 0px",
+    };
+    const appearOnScroll = new IntersectionObserver(function (entries, observer) {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        entry.target.classList.add("visible");
+        observer.unobserve(entry.target);
+      });
+    }, appearOptions);
+    faders.forEach((fader) => {
+      appearOnScroll.observe(fader);
+    });
+  </script>
 </body>
 </html>
